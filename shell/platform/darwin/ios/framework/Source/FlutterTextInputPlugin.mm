@@ -1096,6 +1096,7 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   // When scribble is available, the FlutterTextInputView will display the native toolbar unless
   // these text editing actions are disabled.
   if ([self isScribbleAvailable] && sender == NULL) {
@@ -1107,24 +1108,32 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   }
 
   return [super canPerformAction:action withSender:sender];
+#endif
+return false;
 }
 
 #pragma mark - UIResponderStandardEditActions Overrides
 
 - (void)cut:(id)sender {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   [UIPasteboard generalPasteboard].string = [self textInRange:_selectedTextRange];
   [self replaceRange:_selectedTextRange withText:@""];
+#endif
 }
 
 - (void)copy:(id)sender {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   [UIPasteboard generalPasteboard].string = [self textInRange:_selectedTextRange];
+#endif
 }
 
 - (void)paste:(id)sender {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV) 
   NSString* pasteboardString = [UIPasteboard generalPasteboard].string;
   if (pasteboardString != nil) {
     [self insertText:pasteboardString];
   }
+#endif
 }
 
 - (void)delete:(id)sender {
