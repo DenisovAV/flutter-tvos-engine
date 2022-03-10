@@ -1120,8 +1120,10 @@ static void SendFakeTouchEvent(UIScreen* screen,
   [self invalidateKeyboardAnimationVSyncClient];
   [self invalidateTouchRateCorrectionVSyncClient];
   _scrollView.get().delegate = nil;
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV) 
   _hoverGestureRecognizer.delegate = nil;
   [_hoverGestureRecognizer release];
+#endif 
   _discreteScrollingPanGestureRecognizer.delegate = nil;
   [_discreteScrollingPanGestureRecognizer release];
   _continuousScrollingPanGestureRecognizer.delegate = nil;
