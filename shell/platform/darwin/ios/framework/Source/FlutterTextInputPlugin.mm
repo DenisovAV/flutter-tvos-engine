@@ -1070,6 +1070,7 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   }
   return NO;
 }
+#endif
 
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)scribbleInteractionWillBeginWriting:(UIScribbleInteraction*)interaction
