@@ -2360,6 +2360,7 @@ return false;
   [_activeView setEditableTransform:transform];
   const int leftIndex = 12;
   const int topIndex = 13;
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if ([_activeView isScribbleAvailable]) {
     // This is necessary to set up where the scribble interactable element will be.
     _inputHider.frame =
@@ -2383,6 +2384,7 @@ return false;
           CGRectMake([transform[leftIndex] intValue], [transform[topIndex] intValue], 0, 0);
     }
   }
+  #endif 
 }
 
 - (void)updateMarkedRect:(NSDictionary*)dictionary {
