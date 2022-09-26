@@ -101,6 +101,7 @@ typedef struct MouseState {
  * Mouse and trackpad gesture recognizers
  */
 // Mouse and trackpad hover
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 @property(nonatomic, retain)
     UIHoverGestureRecognizer* hoverGestureRecognizer API_AVAILABLE(ios(13.4));
 // Mouse wheel scrolling
@@ -115,7 +116,6 @@ typedef struct MouseState {
 // Trackpad rotating
 @property(nonatomic, retain)
     UIRotationGestureRecognizer* rotationGestureRecognizer API_AVAILABLE(ios(13.4));
-
 /**
  * Creates and registers plugins used by this view controller.
  */
@@ -1207,7 +1207,6 @@ MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCente
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV) 
   _hoverGestureRecognizer.delegate = nil;
   [_hoverGestureRecognizer release];
-#endif 
   _discreteScrollingPanGestureRecognizer.delegate = nil;
   [_discreteScrollingPanGestureRecognizer release];
   _continuousScrollingPanGestureRecognizer.delegate = nil;
@@ -1216,6 +1215,7 @@ MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCente
   [_pinchGestureRecognizer release];
   _rotationGestureRecognizer.delegate = nil;
   [_rotationGestureRecognizer release];
+#endif
   [super dealloc];
 }
 
@@ -2741,6 +2741,7 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 }
 
 - (void)hoverEvent:(UIPanGestureRecognizer*)recognizer API_AVAILABLE(ios(13.4)) {
+  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)    
   CGPoint location = [recognizer locationInView:self.view];
   CGFloat scale = [self flutterScreenIfViewLoaded].scale;
   CGPoint oldLocation = _mouseState.location;
@@ -2795,6 +2796,7 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
     packet->SetPointerData(/*index=*/0, pointer_data);
     [_engine.get() dispatchPointerDataPacket:std::move(packet)];
   }
+  #endif
 }
 
 - (void)discreteScrollEvent:(UIPanGestureRecognizer*)recognizer API_AVAILABLE(ios(13.4)) {
