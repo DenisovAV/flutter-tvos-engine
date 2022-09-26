@@ -784,7 +784,9 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   bool _isFloatingCursorActive;
   CGPoint _floatingCursorOffset;
   bool _enableInteractiveSelection;
+  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   UITextInteraction* _textInteraction API_AVAILABLE(ios(13.0));
+  #endif
 }
 
 @synthesize tokenizer = _tokenizer;
@@ -934,6 +936,7 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   _hasPlaceholder = NO;
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (UITextInteraction*)textInteraction API_AVAILABLE(ios(13.0)) {
   if (!_textInteraction) {
     _textInteraction = [UITextInteraction textInteractionForMode:UITextInteractionModeEditable];
@@ -941,6 +944,7 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   }
   return _textInteraction;
 }
+#endif
 
 - (void)setTextInputState:(NSDictionary*)state {
   if (@available(iOS 13.0, *)) {
@@ -949,9 +953,11 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
     // and selection changes when that happens, add a dummy UITextInteraction to this
     // view so it sets a valid inputDelegate that we can call textWillChange et al. on.
     // See https://github.com/flutter/engine/pull/32881.
+    #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     if (!self.inputDelegate && self.isFirstResponder) {
       [self addInteraction:self.textInteraction];
     }
+    #endif
   }
 
   NSString* newText = state[@"text"];
@@ -989,12 +995,13 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   if (textChanged) {
     [self.inputDelegate textDidChange:self];
   }
-
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (@available(iOS 13.0, *)) {
     if (_textInteraction) {
       [self removeInteraction:_textInteraction];
     }
   }
+#endif
 }
 
 // Forward touches to the viewResponder to allow tapping inside the UITextField as normal.
