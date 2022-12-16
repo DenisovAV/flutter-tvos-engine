@@ -325,8 +325,12 @@ template("impellerc") {
     iplr = invoker.iplr
   }
   json = false
+  remap_samplers = false
   if (defined(invoker.json) && invoker.json) {
     json = invoker.json
+  }
+  if (defined(invoker.remap_samplers) && invoker.remap_samplers) {
+    remap_samplers = invoker.remap_samplers
   }
 
   # Not needed on every path.
@@ -336,6 +340,14 @@ template("impellerc") {
                "shader_bundle",
                "shader_bundle_output",
              ])
+
+  # Optional: invoker.iplr Causes --sl output to be in iplr format.
+  # Optional: invoker.defines specifies a list of valueless macro definitions.
+  # Optional: invoker.intermediates_subdir specifies the subdirectory in which
+  #           to put intermediates.
+  # Optional: invoker.json Causes output format to be JSON instead of flatbuffer.
+  # Optional: invoker.remap_samplers Output metal samplers according to
+  #           declaration order instead of usage order.
 
   _impellerc(target_name) {
     shader_bundle = defined(invoker.shader_bundle)
@@ -389,6 +401,9 @@ template("impellerc") {
 
     if (json) {
       args += [ "--json" ]
+    }
+    if (remap_samplers) {
+      args += [ "--remap-samplers" ]
     }
 
     if (iplr) {
