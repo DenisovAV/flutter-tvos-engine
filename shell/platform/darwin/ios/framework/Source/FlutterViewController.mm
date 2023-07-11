@@ -1111,8 +1111,10 @@ MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCente
 - (void)viewDidDisappear:(BOOL)animated {
   TRACE_EVENT0("flutter", "viewDidDisappear");
   if ([_engine.get() viewController] == self) {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)      
     [self invalidateKeyboardAnimationVSyncClient];
     [self ensureViewportMetricsIsCorrect];
+#endif    
     [self surfaceUpdated:NO];
     [[_engine.get() lifecycleChannel] sendMessage:@"AppLifecycleState.paused"];
     [self flushOngoingTouches];
@@ -1195,8 +1197,9 @@ MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCente
 
   [self removeInternalPlugins];
   [self deregisterNotifications];
-
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)  
   [self invalidateKeyboardAnimationVSyncClient];
+#endif  
   [self invalidateTouchRateCorrectionVSyncClient];
   _scrollView.get().delegate = nil;
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV) 
@@ -1719,6 +1722,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 
 #pragma mark - Keyboard events
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)   
+
 - (void)keyboardWillShowNotification:(NSNotification*)notification {
   // Immediately prior to a docked keyboard being shown or when a keyboard goes from
   // undocked/floating to docked, this notification is triggered. This notification also happens
@@ -2127,6 +2132,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
     [self updateViewportMetricsIfNeeded];
   }
 }
+
+#endif
 
 - (void)handlePressEvent:(FlutterUIPressProxy*)press
               nextAction:(void (^)())next API_AVAILABLE(ios(13.4)) {
