@@ -410,7 +410,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
   #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   return @{@"value" : @([UIPasteboard generalPasteboard].hasStrings)};
   #else
-  return nil;
+  return @{@"value" : @(hasStrings)};
   #endif
 
 }
