@@ -20,7 +20,8 @@ static bool DeviceSupportsDeviceTransientTargets(id<MTLDevice> device) {
   if (@available(ios 13.0, tvos 13.0, macos 10.15, *)) {
     return [device supportsFamily:MTLGPUFamilyApple2];
   } else {
-#if FML_OS_IOS && !(defined(TARGET_OS_TV) && TARGET_OS_TV)
+#if FML_OS_IOS 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     // This is perhaps redundant. But, just in case we somehow get into a case
     // where Impeller runs on iOS versions less than 8.0 and/or without A8
     // GPUs, we explicitly check feature set support.
@@ -29,7 +30,8 @@ static bool DeviceSupportsDeviceTransientTargets(id<MTLDevice> device) {
     // MacOS devices with Apple GPUs are only available with macos 10.15 and
     // above. So, if we are here, it is safe to assume that memory-less targets
     // are not supported.
-    return false;
+    return [device supportsFeatureSet:MTLFeatureSet_tvOS_GPUFamily1_v1];
+#endif
 #endif
   }
   FML_UNREACHABLE();
@@ -44,7 +46,7 @@ static bool DeviceHasUnifiedMemoryArchitecture(id<MTLDevice> device) {
     return true;
 #else
     // Mac devices where the availability check can fail have never had UMA.
-    return false;
+    return true;
 #endif
   }
   FML_UNREACHABLE();
@@ -65,11 +67,17 @@ static ISize DeviceMaxTextureSizeSupported(id<MTLDevice> device) {
     }
     return {8192, 8192};
   } else {
-#if FML_OS_IOS && !(defined(TARGET_OS_TV) && TARGET_OS_TV)
+#if FML_OS_IOS 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     if ([device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily4_v1] ||
         [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily3_v1]) {
       return {16384, 16384};
     }
+#else
+    if ([device supportsFeatureSet:MTLFeatureSet_tvOS_GPUFamily2_v1]) {
+      return {16384, 16384};
+    }    
+#endif
 #endif
 #if FML_OS_MACOSX
     return {16384, 16384};
@@ -78,6 +86,7 @@ static ISize DeviceMaxTextureSizeSupported(id<MTLDevice> device) {
   }
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 static bool SupportsLossyTextureCompression(id<MTLDevice> device) {
 #ifdef FML_OS_IOS_SIMULATOR
   return false;
@@ -88,6 +97,7 @@ static bool SupportsLossyTextureCompression(id<MTLDevice> device) {
   return false;
 #endif
 }
+#endif
 
 AllocatorMTL::AllocatorMTL(id<MTLDevice> device, std::string label)
     : device_(device), allocator_label_(std::move(label)) {
@@ -206,12 +216,14 @@ std::shared_ptr<Texture> AllocatorMTL::OnCreateTexture(
   mtl_texture_desc.storageMode = ToMTLStorageMode(
       desc.storage_mode, supports_memoryless_targets_, supports_uma_);
 
+  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (@available(macOS 12.5, ios 15.0, tvos 16.0, *)) {
     if (desc.compression_type == CompressionType::kLossy &&
         SupportsLossyTextureCompression(device_)) {
       mtl_texture_desc.compressionType = MTLTextureCompressionTypeLossy;
     }
   }
+  #endif
 
   auto texture = [device_ newTextureWithDescriptor:mtl_texture_desc];
   if (!texture) {
