@@ -3399,45 +3399,8 @@ TEST_P(AiksTest, MatrixImageFilterMagnify) {
   ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
 }
 
-// Render a white circle at the top left corner of the screen.
-TEST_P(AiksTest, MatrixImageFilterDoesntCullWhenTranslatedFromOffscreen) {
-  Canvas canvas;
-  canvas.Scale(GetContentScale());
-  canvas.Translate({100, 100});
-  // Draw a circle in a SaveLayer at -300, but move it back on-screen with a
-  // +300 translation applied by a SaveLayer image filter.
-  canvas.SaveLayer({
-      .image_filter = std::make_shared<MatrixImageFilter>(
-          Matrix::MakeTranslation({300, 0}), SamplerDescriptor{}),
-  });
-  canvas.DrawCircle({-300, 0}, 100, {.color = Color::Green()});
-  canvas.Restore();
-
-  ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
-}
-
-// Render a white circle at the top left corner of the screen.
-TEST_P(AiksTest,
-       MatrixImageFilterDoesntCullWhenScaledAndTranslatedFromOffscreen) {
-  Canvas canvas;
-  canvas.Scale(GetContentScale());
-  canvas.Translate({100, 100});
-  // Draw a circle in a SaveLayer at -300, but move it back on-screen with a
-  // +300 translation applied by a SaveLayer image filter.
-  canvas.SaveLayer({
-      .image_filter = std::make_shared<MatrixImageFilter>(
-          Matrix::MakeTranslation({300, 0}) * Matrix::MakeScale({2, 2, 2}),
-          SamplerDescriptor{}),
-  });
-  canvas.DrawCircle({-150, 0}, 50, {.color = Color::Green()});
-  canvas.Restore();
-
-  ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
-}
-
 // This should be solid red, if you see a little red box this is broken.
 TEST_P(AiksTest, ClearColorOptimizationWhenSubpassIsBiggerThanParentPass) {
-  SetWindowSize({400, 400});
   Canvas canvas;
   canvas.Scale(GetContentScale());
   canvas.DrawRect(Rect::MakeLTRB(200, 200, 300, 300), {.color = Color::Red()});
@@ -3455,6 +3418,7 @@ TEST_P(AiksTest, ClearColorOptimizationWhenSubpassIsBiggerThanParentPass) {
   ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
 }
 
+<<<<<<< HEAD
 TEST_P(AiksTest, BlurHasNoEdge) {
   Canvas canvas;
   canvas.Scale(GetContentScale());
@@ -3784,5 +3748,7 @@ TEST_P(AiksTest, SubpassWithClearColorOptimization) {
   // will be filled with NaNs and may produce a magenta texture on macOS or iOS.
   ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
 }
+=======
+>>>>>>> 2dd11e3383 ([CP][Impeller] fix clear color optimization for large subpasses. (#46887) (#47577))
 }  // namespace testing
 }  // namespace impeller
