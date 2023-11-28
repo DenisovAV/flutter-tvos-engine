@@ -71,13 +71,15 @@ TEST(TessellatorTest, TessellatorBuilderReturnsCorrectResultStatus) {
   // Closure fails.
   {
     Tessellator t;
-    auto path =
-        PathBuilder{}.AddLine({0, 0}, {0, 1}).TakePath(FillType::kPositive);
-    Tessellator::Result result = t.Tessellate(
-        path, 1.0f,
-        [](const float* vertices, size_t vertices_count,
-           const uint16_t* indices, size_t indices_count) { return false; });
+    auto polyline =
+        PathBuilder{}.AddLine({0, 0}, {0, 1}).TakePath().CreatePolyline(1.0f);
+    Tessellator::Result result =
+        t.Tessellate(FillType::kPositive, polyline,
+                     [](const float* vertices, size_t vertices_count,
+                        const uint16_t* indices_count,
+                        size_t indices_size) { return false; });
 
+    ASSERT_EQ(polyline.points.size(), 2u);
     ASSERT_EQ(result, Tessellator::Result::kInputError);
   }
 
