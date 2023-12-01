@@ -453,12 +453,12 @@ FLUTTER_ASSERT_ARC
   OCMStub([mockApplication sharedApplication]).andReturn(mockApplication);
 
   // Enabling system UI overlays to update status bar.
-  FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"test" project:nil];
+  FlutterEngine* engine = [[[FlutterEngine alloc] initWithName:@"test" project:nil] autorelease];
   [engine runWithEntrypoint:nil];
   FlutterViewController* flutterViewController =
-      [[FlutterViewController alloc] initWithEngine:engine nibName:nil bundle:nil];
-  std::unique_ptr<fml::WeakNSObjectFactory<FlutterEngine>> _weakFactory =
-      std::make_unique<fml::WeakNSObjectFactory<FlutterEngine>>(engine);
+      [[[FlutterViewController alloc] initWithEngine:engine nibName:nil bundle:nil] autorelease];
+  std::unique_ptr<fml::WeakPtrFactory<FlutterEngine>> _weakFactory =
+      std::make_unique<fml::WeakPtrFactory<FlutterEngine>>(engine);
 
   // Update to hidden.
   FlutterPlatformPlugin* plugin = [engine platformPlugin];
@@ -504,12 +504,12 @@ FLUTTER_ASSERT_ARC
   id mockApplication = OCMClassMock([UIApplication class]);
   OCMStub([mockApplication sharedApplication]).andReturn(mockApplication);
 
-  FlutterEngine* engine = [[FlutterEngine alloc] initWithName:@"test" project:nil];
+  FlutterEngine* engine = [[[FlutterEngine alloc] initWithName:@"test" project:nil] autorelease];
   [engine runWithEntrypoint:nil];
   FlutterViewController* flutterViewController =
-      [[FlutterViewController alloc] initWithEngine:engine nibName:nil bundle:nil];
-  std::unique_ptr<fml::WeakNSObjectFactory<FlutterEngine>> _weakFactory =
-      std::make_unique<fml::WeakNSObjectFactory<FlutterEngine>>(engine);
+      [[[FlutterViewController alloc] initWithEngine:engine nibName:nil bundle:nil] autorelease];
+  std::unique_ptr<fml::WeakPtrFactory<FlutterEngine>> _weakFactory =
+      std::make_unique<fml::WeakPtrFactory<FlutterEngine>>(engine);
   XCTAssertFalse(flutterViewController.prefersStatusBarHidden);
 
   FlutterPlatformPlugin* plugin = [engine platformPlugin];
