@@ -286,6 +286,11 @@ bool Canvas::AttemptDrawBlurredRRect(const Rect& rect,
 
   Paint new_paint = paint;
 
+  if (std::fabs(new_paint.mask_blur_descriptor->sigma.sigma) <=
+      kEhCloseEnough) {
+    return true;
+  }
+
   // For symmetrically mask blurred solid RRects, absorb the mask blur and use
   // a faster SDF approximation.
 

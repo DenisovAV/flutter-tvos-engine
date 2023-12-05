@@ -61,7 +61,8 @@ std::optional<Rect> SolidRRectBlurContents::GetCoverage(
 bool SolidRRectBlurContents::Render(const ContentContext& renderer,
                                     const Entity& entity,
                                     RenderPass& pass) const {
-  if (!rect_.has_value()) {
+  // Early return if sigma is close to zero to avoid rendering NaNs.
+  if (!rect_.has_value() || std::fabs(sigma_.sigma) <= kEhCloseEnough) {
     return true;
   }
 
