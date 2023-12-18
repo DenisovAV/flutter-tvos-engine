@@ -689,7 +689,7 @@ void Canvas::SaveLayer(const Paint& paint,
   // applied.
   // See also: https://github.com/flutter/flutter/issues/139294
   if (paint.image_filter) {
-    transform_stack_.back().cull_rect = std::nullopt;
+    xformation_stack_.back().cull_rect = std::nullopt;
   }
 
   auto& new_layer_pass = GetCurrentPass();
