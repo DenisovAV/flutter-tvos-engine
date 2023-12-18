@@ -844,8 +844,7 @@ bool EntityPass::OnRender(
   }
   auto clear_color_size = pass_target.GetRenderTarget().GetRenderTargetSize();
 
-  if (!collapsed_parent_pass &&
-      !GetClearColor(clear_color_size).IsTransparent()) {
+  if (!collapsed_parent_pass && GetClearColor(clear_color_size).has_value()) {
     // Force the pass context to create at least one new pass if the clear color
     // is present.
     pass_context.GetRenderPass(pass_depth);

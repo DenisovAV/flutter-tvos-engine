@@ -3436,5 +3436,27 @@ TEST_P(AiksTest, MaskBlurWithZeroSigmaIsSkipped) {
   ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
 }
 
+TEST_P(AiksTest, SubpassWithClearColorOptimization) {
+  Canvas canvas;
+
+  // Use a non-srcOver blend mode to ensure that we don't detect this as an
+  // opacity peephole optimization.
+  canvas.SaveLayer(
+      {.color = Color::Blue().WithAlpha(0.5), .blend_mode = BlendMode::kSource},
+      Rect::MakeLTRB(0, 0, 200, 200));
+  canvas.DrawPaint(
+      {.color = Color::BlackTransparent(), .blend_mode = BlendMode::kSource});
+  canvas.Restore();
+
+  canvas.SaveLayer(
+      {.color = Color::Blue(), .blend_mode = BlendMode::kDestinationOver});
+  canvas.Restore();
+
+  // This playground should appear blank on CI since we are only drawing
+  // transparent black. If the clear color optimization is broken, the texture
+  // will be filled with NaNs and may produce a magenta texture on macOS or iOS.
+  ASSERT_TRUE(OpenPlaygroundHere(canvas.EndRecordingAsPicture()));
+}
+
 }  // namespace testing
 }  // namespace impeller
