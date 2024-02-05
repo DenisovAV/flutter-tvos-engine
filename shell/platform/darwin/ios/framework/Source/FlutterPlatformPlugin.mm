@@ -226,11 +226,11 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
     if ([@"HapticFeedbackType.lightImpact" isEqualToString:feedbackType]) {
       [[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight] autorelease]
           impactOccurred];
-    } else if ([@"HapticFeedbackType.mediumImpact" isEqualToString:feedbackType]) {
-      [[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium] autorelease]
+  } else if ([@"HapticFeedbackType.mediumImpact" isEqualToString:feedbackType]) {
+    [[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium] autorelease]
           impactOccurred];
-    } else if ([@"HapticFeedbackType.heavyImpact" isEqualToString:feedbackType]) {
-      [[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy] autorelease]
+  } else if ([@"HapticFeedbackType.heavyImpact" isEqualToString:feedbackType]) {
+    [[[[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy] autorelease]
           impactOccurred];
     } else if ([@"HapticFeedbackType.selectionClick" isEqualToString:feedbackType]) {
       [[[[UISelectionFeedbackGenerator alloc] init] autorelease] selectionChanged];
@@ -272,6 +272,12 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
 }
 
 - (void)setSystemChromeEnabledSystemUIOverlays:(NSArray*)overlays {
+  // Checks if the top status bar should be visible. This platform ignores all
+  // other overlays
+
+  // We opt out of view controller based status bar visibility since we want
+  // to be able to modify this on the fly. The key used is
+  // UIViewControllerBasedStatusBarAppearance
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   BOOL statusBarShouldBeHidden = ![overlays containsObject:@"SystemUiOverlay.top"];
   if ([overlays containsObject:@"SystemUiOverlay.bottom"]) {
@@ -294,11 +300,12 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
     // UIViewControllerBasedStatusBarAppearance.
     SetStatusBarHiddenForSharedApplication(statusBarShouldBeHidden);
   }
-#endif
+  #endif
 }
 
 - (void)setSystemChromeEnabledSystemUIMode:(NSString*)mode {
   BOOL edgeToEdge = [mode isEqualToString:@"SystemUiMode.edgeToEdge"];
+  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (self.enableViewControllerBasedStatusBarAppearance) {
     [_engine.get() viewController].prefersStatusBarHidden = !edgeToEdge;
   } else {
@@ -310,6 +317,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
     // UIViewControllerBasedStatusBarAppearance.
     SetStatusBarHiddenForSharedApplication(!edgeToEdge);
   }
+  #endif    
   [[NSNotificationCenter defaultCenter]
       postNotificationName:edgeToEdge ? FlutterViewControllerShowHomeIndicator
                                       : FlutterViewControllerHideHomeIndicator
@@ -407,11 +415,11 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
 }
 
 - (NSDictionary*)clipboardHasStrings {
-  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
-  return @{@"value" : @([UIPasteboard generalPasteboard].hasStrings)};
-  #else
-  return @{@"value" : @false};
-  #endif
+  bool hasStrings = false;
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
+    hasStrings = [UIPasteboard generalPasteboard].hasStrings;
+#endif
+  return @{@"value" : @(hasStrings)};
 }
 
 - (BOOL)isLiveTextInputAvailable {
