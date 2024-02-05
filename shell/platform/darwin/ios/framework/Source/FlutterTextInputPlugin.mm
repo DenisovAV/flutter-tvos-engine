@@ -394,12 +394,11 @@ static BOOL IsFieldPasswordRelated(NSDictionary* configuration) {
       [contentType isEqualToString:UITextContentTypeUsername]) {
     return YES;
   }
-
-  if (@available(iOS 12.0, *)) {
-    if ([contentType isEqualToString:UITextContentTypeNewPassword]) {
+  
+  if ([contentType isEqualToString:UITextContentTypeNewPassword]) {
       return YES;
-    }
   }
+
   return NO;
 }
 
@@ -2350,9 +2349,9 @@ return false;
 - (void)setEditableSizeAndTransform:(NSDictionary*)dictionary {
   NSArray* transform = dictionary[@"transform"];
   [_activeView setEditableTransform:transform];
+  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV) 
   const int leftIndex = 12;
   const int topIndex = 13;
-#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if ([_activeView isScribbleAvailable]) {
     // This is necessary to set up where the scribble interactable element will be.
     _inputHider.frame =
@@ -2411,12 +2410,14 @@ return false;
 }
 
 - (void)startLiveTextInput {
-  if (@available(iOS 15.0, *)) {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
+  if (@available(iOS 15.0, tvOS 15.0, *)) {
     if (_activeView == nil || !_activeView.isFirstResponder) {
       return;
     }
     [_activeView captureTextFromCamera:nil];
   }
+#endif
 }
 
 - (void)showTextInput {

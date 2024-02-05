@@ -117,6 +117,8 @@ typedef struct MouseState {
 // Trackpad rotating
 @property(nonatomic, retain)
     UIRotationGestureRecognizer* rotationGestureRecognizer API_AVAILABLE(ios(13.4));
+#endif
+
 /**
  * Creates and registers plugins used by this view controller.
  */
@@ -644,8 +646,9 @@ static void SendFakeTouchEvent(FlutterEngine* engine,
   return _keyboardSpringAnimation.get();
 }
 
+//#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (UIScreen*)mainScreenIfViewLoaded {
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.0, tvOS 13.0, *)) {
     if (self.viewIfLoaded == nil) {
       FML_LOG(WARNING) << "Trying to access the view before it is loaded.";
     }
@@ -653,6 +656,7 @@ static void SendFakeTouchEvent(FlutterEngine* engine,
   }
   return UIScreen.mainScreen;
 }
+//#endif
 
 - (UIWindowScene*)windowSceneIfViewLoaded {
   if (self.viewIfLoaded == nil) {
@@ -1388,29 +1392,28 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
     // The ranges are the same. Origins are swapped.
     pointer_data.tilt = M_PI_2 - touch.altitudeAngle;
 
-      // iOS Documentation: azimuthAngleInView:
-      // With the tip of the stylus touching the screen, the value of this property is 0 radians
-      // when the cap end of the stylus (that is, the end opposite of the tip) points along the
-      // positive x axis of the device's screen. The azimuth angle increases as the user swings the
-      // cap end of the stylus in a clockwise direction around the tip.
-      //
-      // PointerData Documentation: orientation
-      // The angle of the stylus, in radians in the range:
-      //    -pi < orientation <= pi
-      // giving the angle of the axis of the stylus projected onto the input surface, relative to
-      // the positive y-axis of that surface (thus 0.0 indicates the stylus, if projected onto that
-      // surface, would go from the contact point vertically up in the positive y-axis direction, pi
-      // would indicate that the stylus would go down in the negative y-axis direction; pi/4 would
-      // indicate that the stylus goes up and to the right, -pi/2 would indicate that the stylus
-      // goes to the left, etc).
-      //
-      // Discussion:
-      // Sweep direction is the same. Phase of M_PI_2.
-      pointer_data.orientation = [touch azimuthAngleInView:nil] - M_PI_2;
-    
+    // iOS Documentation: azimuthAngleInView:
+    // With the tip of the stylus touching the screen, the value of this property is 0 radians
+    // when the cap end of the stylus (that is, the end opposite of the tip) points along the
+    // positive x axis of the device's screen. The azimuth angle increases as the user swings the
+    // cap end of the stylus in a clockwise direction around the tip.
+    //
+    // PointerData Documentation: orientation
+    // The angle of the stylus, in radians in the range:
+    //    -pi < orientation <= pi
+    // giving the angle of the axis of the stylus projected onto the input surface, relative to
+    // the positive y-axis of that surface (thus 0.0 indicates the stylus, if projected onto that
+    // surface, would go from the contact point vertically up in the positive y-axis direction, pi
+    // would indicate that the stylus would go down in the negative y-axis direction; pi/4 would
+    // indicate that the stylus goes up and to the right, -pi/2 would indicate that the stylus
+    // goes to the left, etc).
+    //
+    // Discussion:
+    // Sweep direction is the same. Phase of M_PI_2.
+    pointer_data.orientation = [touch azimuthAngleInView:nil] - M_PI_2;
     #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     if (@available(iOS 13.4, *)) {
-        if (event != nullptr) {
+      if (event != nullptr) {
         pointer_data.buttons = (((event.buttonMask & UIEventButtonMaskPrimary) > 0)
                                     ? flutter::PointerButtonMouse::kPointerButtonMousePrimary
                                     : 0) |
@@ -2147,7 +2150,7 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
   if (new_preferences != _orientationPreferences) {
     _orientationPreferences = new_preferences;
 
-    if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, tvOS 16.0, *)) {
       for (UIScene* scene in UIApplication.sharedApplication.connectedScenes) {
         if (![scene isKindOfClass:[UIWindowScene class]]) {
           continue;
@@ -2441,7 +2444,6 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
     }
   });
 }
-#endif
 
 - (void)setPrefersStatusBarHidden:(BOOL)hidden {
   if (hidden != _flutterPrefersStatusBarHidden) {
@@ -2449,6 +2451,7 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
     [self setNeedsStatusBarAppearanceUpdate];
   }
 }
+#endif
 
 - (BOOL)prefersStatusBarHidden {
   return _flutterPrefersStatusBarHidden;
