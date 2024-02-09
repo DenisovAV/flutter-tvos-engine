@@ -97,6 +97,7 @@
   [mockApplication stopMocking];
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testLookUpCallInitiated {
   FlutterEngine* engine = [[[FlutterEngine alloc] initWithName:@"test" project:nil] autorelease];
   [engine runWithEntrypoint:nil];
@@ -264,6 +265,7 @@
   [plugin handleMethodCall:methodCall result:result];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
+#endif
 
 - (void)testPopSystemNavigator {
   FlutterEngine* engine = [[[FlutterEngine alloc] initWithName:@"test" project:nil] autorelease];
@@ -405,6 +407,7 @@
   [bundleMock stopMocking];
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testStatusBarHiddenUpdate {
   id bundleMock = OCMPartialMock([NSBundle mainBundle]);
   OCMStub([bundleMock objectForInfoDictionaryKey:@"UIViewControllerBasedStatusBarAppearance"])
@@ -493,5 +496,6 @@
   [mockApplication stopMocking];
   [bundleMock stopMocking];
 }
+#endif
 
 @end

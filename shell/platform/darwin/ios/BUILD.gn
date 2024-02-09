@@ -227,7 +227,7 @@ source_set("ios_test_flutter_mrc") {
   cflags = [
     "-fvisibility=default",
     "-F$platform_frameworks_path",
-    "-mios-simulator-version-min=$ios_testing_deployment_target",
+    "-mappletvsimulator-version-min=$ios_testing_deployment_target",
   ]
 
   # XCode 15 beta has a bug where iOS 17 API usage is not guarded.
@@ -280,7 +280,7 @@ shared_library("ios_test_flutter") {
     "-fvisibility=default",
     "-F$platform_frameworks_path",
     "-fobjc-arc",
-    "-mios-simulator-version-min=$ios_testing_deployment_target",
+    "-mappletvsimulator-version-min=$ios_testing_deployment_target",
   ]
 
   # XCode 15 beta has a bug where iOS 17 API usage is not guarded.

@@ -44,6 +44,7 @@ const char* const kOverlayStyleUpdateNotificationKey =
 
 using namespace flutter;
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)  
 static void SetStatusBarHiddenForSharedApplication(BOOL hidden) {
 #if not APPLICATION_EXTENSION_API_ONLY
   [UIApplication sharedApplication].statusBarHidden = hidden;
@@ -51,8 +52,10 @@ static void SetStatusBarHiddenForSharedApplication(BOOL hidden) {
   FML_LOG(WARNING) << "Application based status bar styling is not available in app extension.";
 #endif
 }
+#endif
 
-static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)  
+static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) { 
 #if not APPLICATION_EXTENSION_API_ONLY
   // Note: -[UIApplication setStatusBarStyle] is deprecated in iOS9
   // in favor of delegating to the view controller.
@@ -61,6 +64,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
   FML_LOG(WARNING) << "Application based status bar styling is not available in app extension.";
 #endif
 }
+#endif
 
 @interface FlutterPlatformPlugin ()
 
@@ -160,6 +164,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
   UIViewController* engineViewController = [_engine.get() viewController];
 
   NSArray* itemsToShare = @[ content ?: [NSNull null] ];
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)   
   UIActivityViewController* activityViewController =
       [[[UIActivityViewController alloc] initWithActivityItems:itemsToShare
                                          applicationActivities:nil] autorelease];
@@ -191,6 +196,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
   }
 
   [engineViewController presentViewController:activityViewController animated:YES completion:nil];
+#endif  
 }
 
 - (void)searchWeb:(NSString*)searchTerm {
@@ -300,12 +306,12 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
     // UIViewControllerBasedStatusBarAppearance.
     SetStatusBarHiddenForSharedApplication(statusBarShouldBeHidden);
   }
-  #endif
+#endif
 }
 
 - (void)setSystemChromeEnabledSystemUIMode:(NSString*)mode {
   BOOL edgeToEdge = [mode isEqualToString:@"SystemUiMode.edgeToEdge"];
-  #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (self.enableViewControllerBasedStatusBarAppearance) {
     [_engine.get() viewController].prefersStatusBarHidden = !edgeToEdge;
   } else {
@@ -317,7 +323,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
     // UIViewControllerBasedStatusBarAppearance.
     SetStatusBarHiddenForSharedApplication(!edgeToEdge);
   }
-  #endif    
+#endif    
   [[NSNotificationCenter defaultCenter]
       postNotificationName:edgeToEdge ? FlutterViewControllerShowHomeIndicator
                                       : FlutterViewControllerHideHomeIndicator
@@ -427,12 +433,14 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
 }
 
 - (void)showLookUpViewController:(NSString*)term {
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)    
   UIViewController* engineViewController = [_engine.get() viewController];
   UIReferenceLibraryViewController* referenceLibraryViewController =
       [[[UIReferenceLibraryViewController alloc] initWithTerm:term] autorelease];
   [engineViewController presentViewController:referenceLibraryViewController
                                      animated:YES
                                    completion:nil];
+#endif                                   
 }
 
 - (UITextField*)textField {

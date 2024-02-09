@@ -386,11 +386,6 @@ typedef struct MouseState {
                  name:UIAccessibilityDarkerSystemColorsStatusDidChangeNotification
                object:nil];
 
-  [center addObserver:self
-             selector:@selector(onUserSettingsChanged:)
-                 name:UIContentSizeCategoryDidChangeNotification
-               object:nil];
-
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (@available(iOS 13.0, *)) {
     [center addObserver:self
@@ -398,7 +393,14 @@ typedef struct MouseState {
                    name:UIAccessibilityOnOffSwitchLabelsDidChangeNotification
                  object:nil];
   }
+#endif
 
+  [center addObserver:self
+             selector:@selector(onUserSettingsChanged:)
+                 name:UIContentSizeCategoryDidChangeNotification
+               object:nil];
+
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   [center addObserver:self
              selector:@selector(onHideHomeIndicatorNotification:)
                  name:FlutterViewControllerHideHomeIndicator
@@ -408,7 +410,7 @@ typedef struct MouseState {
              selector:@selector(onShowHomeIndicatorNotification:)
                  name:FlutterViewControllerShowHomeIndicator
                object:nil];
-  #endif
+#endif
 }
 
 - (void)setUpSceneLifecycleNotifications:(NSNotificationCenter*)center API_AVAILABLE(ios(13.0)) {
@@ -1075,10 +1077,6 @@ MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCente
   }
 
   [super viewWillAppear:animated];
-
-  //if (@available(iOS 13.4, tvOS 13.4, *)) {
-  //  [self dispatchPresses:nil];
-  //}
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -1734,29 +1732,6 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 }
 
 - (void)keyboardWillChangeFrame:(NSNotification*)notification {
-#ifdef TARGET_OS_TV
-    CGRect keyboardFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, 100.0);
-    
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-
-    // Get the animation duration
-    NSTimeInterval duration =
-        [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-
-    // Considering the iPad's split keyboard, Flutter needs to check if the keyboard frame is present
-    // in the screen to see if the keyboard is visible.
-    if (CGRectIntersectsRect(keyboardFrame, screenRect)) {
-      CGFloat bottom = CGRectGetHeight(keyboardFrame);
-      CGFloat scale = [UIScreen mainScreen].scale;
-      // The keyboard is treated as an inset since we want to effectively reduce the window size by
-      // the keyboard height. The Dart side will compute a value accounting for the keyboard-consuming
-      // bottom padding.
-      self.targetViewInsetBottom = bottom * scale;
-    } else {
-      self.targetViewInsetBottom = 0;
-    }
-    [self startKeyBoardAnimation:duration];
-#else
   // Immediately prior to a change in keyboard frame, this notification is triggered.
   // Sometimes when the keyboard is being hidden or undocked, this notification's keyboard's end
   // frame is not yet entirely out of screen, which is why we also use
@@ -2163,8 +2138,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 
 #if !(defined(TARGET_OS_TV) && TARGET_OS_TV)    
 - (void)pressesBegan:(NSSet<UIPress*>*)presses
-           withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0),tvos(10.0)) {                 
-  if (@available(iOS 13.4, tvOS 13.4, *)) {
+           withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0)) {                 
+  if (@available(iOS 13.4, *)) {
     for (UIPress* press in presses) {
       [self handlePressEvent:[[[FlutterUIPressProxy alloc] initWithPress:press
                                                                withEvent:event] autorelease]
@@ -2178,8 +2153,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 }
 
 - (void)pressesChanged:(NSSet<UIPress*>*)presses
-             withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0),tvos(10.0)) {                       
-  if (@available(iOS 13.4, tvOS 13.4, *)) {
+             withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0)) {                       
+  if (@available(iOS 13.4, *)) {
     for (UIPress* press in presses) {
       [self handlePressEvent:[[[FlutterUIPressProxy alloc] initWithPress:press
                                                                withEvent:event] autorelease]
@@ -2193,8 +2168,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 }
 
 - (void)pressesEnded:(NSSet<UIPress*>*)presses
-           withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0),tvos(10.0)) {                             
-  if (@available(iOS 13.4, tvOS 13.4, *)) {
+           withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0)) {                             
+  if (@available(iOS 13.4, *)) {
     for (UIPress* press in presses) {
       [self handlePressEvent:[[[FlutterUIPressProxy alloc] initWithPress:press
                                                                withEvent:event] autorelease]
@@ -2208,8 +2183,8 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
 }
 
 - (void)pressesCancelled:(NSSet<UIPress*>*)presses
-               withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0),tvos(10.0)) {                                    
-  if (@available(iOS 13.4, tvOS 13.4, *)) {
+               withEvent:(UIPressesEvent*)event API_AVAILABLE(ios(9.0)) {                                    
+  if (@available(iOS 13.4, *)) {
     for (UIPress* press in presses) {
       [self handlePressEvent:[[[FlutterUIPressProxy alloc] initWithPress:press
                                                                withEvent:event] autorelease]
@@ -2282,8 +2257,7 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
   if (new_preferences != _orientationPreferences) {
     _orientationPreferences = new_preferences;
 
-<<<<<<< HEAD
-    if (@available(iOS 16.0, *)) {
+    if (@available(iOS 16.0, tvOS 16.0, *)) {
       NSSet<UIScene*>* scenes =
 #if APPLICATION_EXTENSION_API_ONLY
           self.flutterWindowSceneIfViewLoaded
@@ -2297,26 +2271,6 @@ static flutter::PointerData::DeviceKind DeviceKindFromTouchType(UITouch* touch) 
               }]];
 #endif
       [self requestGeometryUpdateForWindowScenes:scenes];
-=======
-    if (@available(iOS 16.0, tvOS 16.0, *)) {
-      for (UIScene* scene in UIApplication.sharedApplication.connectedScenes) {
-        if (![scene isKindOfClass:[UIWindowScene class]]) {
-          continue;
-        }
-        UIWindowScene* windowScene = (UIWindowScene*)scene;
-        UIWindowSceneGeometryPreferencesIOS* preference =
-            [[[UIWindowSceneGeometryPreferencesIOS alloc]
-                initWithInterfaceOrientations:_orientationPreferences] autorelease];
-        [windowScene
-            requestGeometryUpdateWithPreferences:preference
-                                    errorHandler:^(NSError* error) {
-                                      os_log_error(OS_LOG_DEFAULT,
-                                                   "Failed to change device orientation: %@",
-                                                   error);
-                                    }];
-        [self setNeedsUpdateOfSupportedInterfaceOrientations];
-      }
->>>>>>> 4745c79d1a (update to 3.13.8)
     } else {
       UIInterfaceOrientationMask currentInterfaceOrientation = 0;
       if (@available(iOS 13.0, *)) {

@@ -22,8 +22,6 @@ std::unique_ptr<IOSSurface> IOSSurface::Create(std::shared_ptr<IOSContext> conte
 
 #if SHELL_ENABLE_METAL
   if (@available(iOS METAL_IOS_VERSION_BASELINE, *)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunguarded-availability-new"
     if ([layer.get() isKindOfClass:[CAMetalLayer class]]) {
       switch (context->GetBackend()) {
         case IOSRenderingBackend::kSkia:
@@ -42,7 +40,6 @@ std::unique_ptr<IOSSurface> IOSSurface::Create(std::shared_ptr<IOSContext> conte
       }
     }
   }
-#pragma GCC diagnostic pop
 #endif  // SHELL_ENABLE_METAL
 
   return std::make_unique<IOSSurfaceSoftware>(layer,              // layer

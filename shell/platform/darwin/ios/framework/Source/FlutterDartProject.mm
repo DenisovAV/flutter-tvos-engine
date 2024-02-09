@@ -45,7 +45,11 @@ static BOOL DoesHardwareSupportWideGamut() {
       result = [device supportsFamily:MTLGPUFamilyApple2];
     } else {
       // A9/A10 on iOS 10+
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
       result = [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily3_v2];
+#else
+      result = [device supportsFeatureSet:MTLFeatureSet_tvOS_GPUFamily2_v2];
+#endif
     }
     [device release];
   });
