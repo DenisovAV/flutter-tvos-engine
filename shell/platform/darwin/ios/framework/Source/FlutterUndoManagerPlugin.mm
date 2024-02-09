@@ -99,7 +99,7 @@ static NSString* const kCanRedo = @"canRedo";
   if (canRedo) {
     [self registerRedo];
   }
-
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
   if (_viewController.engine.textInputPlugin.textInputView != nil) {
     // This is needed to notify the iPadOS keyboard that it needs to update the
     // state of the UIBarButtons. Otherwise, the state changes to NSUndoManager
@@ -108,6 +108,7 @@ static NSString* const kCanRedo = @"canRedo";
         _viewController.engine.textInputPlugin.textInputView.inputAssistantItem;
     assistantItem.leadingBarButtonGroups = assistantItem.leadingBarButtonGroups;
   }
+#endif  
   [self undoManager].groupsByEvent = groupsByEvent;
 }
 

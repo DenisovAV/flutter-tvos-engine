@@ -65,7 +65,6 @@ IOSRenderingAPI GetRenderingAPIForProcess(bool force_software) {
 }
 
 Class GetCoreAnimationLayerClassForRenderingAPI(IOSRenderingAPI rendering_api) {
-
   switch (rendering_api) {
     case IOSRenderingAPI::kSoftware:
       return [CALayer class];

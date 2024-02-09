@@ -299,6 +299,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   XCTAssertTrue(keyboardSpringAnimation != nil);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testKeyboardAnimationIsShowingAndCompounding {
   FlutterEngine* engine = [[FlutterEngine alloc] init];
   [engine runWithEntrypoint:nil];
@@ -493,6 +494,8 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
     XCTAssertTrue(shouldIgnore == YES);
   }
 }
+#endif
+
 - (void)testKeyboardAnimationWillNotCrashWhenEngineDestroyed {
   FlutterEngine* engine = [[FlutterEngine alloc] init];
   [engine runWithEntrypoint:nil];
@@ -532,6 +535,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   XCTAssertTrue(fulfillTime - startTime > delayTime);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testCalculateKeyboardAttachMode {
   FlutterEngine* mockEngine = OCMPartialMock([[FlutterEngine alloc] init]);
   [mockEngine createShell:@"" libraryURI:@"" initialRoute:nil];
@@ -660,6 +664,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   keyboardMode = [viewControllerMock calculateKeyboardAttachMode:notification];
   XCTAssertTrue(keyboardMode == FlutterKeyboardModeHidden);
 }
+#endif
 
 - (void)testCalculateMultitaskingAdjustment {
   FlutterEngine* mockEngine = OCMPartialMock([[FlutterEngine alloc] init]);
@@ -717,6 +722,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   XCTAssertTrue(inset == 300 * screen.scale);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testHandleKeyboardNotification {
   FlutterEngine* engine = [[FlutterEngine alloc] init];
   [engine runWithEntrypoint:nil];
@@ -778,6 +784,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   [viewControllerMock handleKeyboardNotification:fakeNotification];
   XCTAssertTrue(viewControllerMock.targetViewInsetBottom == 0);
 }
+#endif
 
 - (void)testEnsureViewportMetricsWillInvokeAndDisplayLinkWillInvalidateInViewDidDisappear {
   FlutterEngine* mockEngine = OCMPartialMock([[FlutterEngine alloc] init]);
@@ -1365,6 +1372,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   XCTAssert((flags & (int32_t)flutter::AccessibilityFeatureFlag::kOnOffSwitchLabels) != 0);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testPerformOrientationUpdateForcesOrientationChange {
   [self orientationTestWithOrientationUpdate:UIInterfaceOrientationMaskPortrait
                           currentOrientation:UIInterfaceOrientationLandscapeLeft
@@ -1577,6 +1585,7 @@ extern NSNotificationName const FlutterViewControllerWillDealloc;
   [mockApplication stopMocking];
   XCTAssertNil(weakPreferences);
 }
+#endif
 
 // Creates a mocked UITraitCollection with nil values for everything except accessibilityContrast,
 // which is set to the given "contrast".

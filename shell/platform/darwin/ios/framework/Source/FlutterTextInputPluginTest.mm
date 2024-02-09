@@ -369,6 +369,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(updateCount, 1);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testAutocorrectionPromptRectDoesNotAppearDuringScribble {
   // Auto-correction prompt is disabled in iOS 17+.
   if (@available(iOS 17.0, *)) {
@@ -390,10 +391,8 @@ FLUTTER_ASSERT_ARC
     [inputView firstRectForRange:[FlutterTextRange rangeWithNSRange:NSMakeRange(0, 1)]];
     // showAutocorrectionPromptRectForStart fires in response to firstRectForRange
     XCTAssertEqual(callCount, 1);
-#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     UIScribbleInteraction* scribbleInteraction =
         [[UIScribbleInteraction alloc] initWithDelegate:inputView];
-#endif
     [inputView scribbleInteractionWillBeginWriting:scribbleInteraction];
     [inputView firstRectForRange:[FlutterTextRange rangeWithNSRange:NSMakeRange(0, 1)]];
     // showAutocorrectionPromptRectForStart does not fire in response to setMarkedText during a
@@ -458,6 +457,7 @@ FLUTTER_ASSERT_ARC
               @"The input hider should be on the origin of screen on and before iOS 16.");
   }
 }
+#endif
 
 - (void)testTextRangeFromPositionMatchesUITextViewBehavior {
   FlutterTextInputView* inputView = [[FlutterTextInputView alloc] initWithOwner:textInputPlugin];
@@ -1275,6 +1275,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(updateCount, 2);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testCanCopyPasteWithScribbleEnabled {
   if (@available(iOS 14.0, *)) {
     NSDictionary* config = self.mutableTemplateCopy;
@@ -1316,10 +1317,8 @@ FLUTTER_ASSERT_ARC
     [inputView setMarkedText:@"marked text" selectedRange:NSMakeRange(0, 1)];
     // updateEditingClient fires in response to setMarkedText.
     XCTAssertEqual(updateCount, 1);
-#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
     UIScribbleInteraction* scribbleInteraction =
         [[UIScribbleInteraction alloc] initWithDelegate:inputView];
-#endif
     [inputView scribbleInteractionWillBeginWriting:scribbleInteraction];
     [inputView setMarkedText:@"during writing" selectedRange:NSMakeRange(1, 2)];
     // updateEditingClient does not fire in response to setMarkedText during a scribble interaction.
@@ -1349,6 +1348,7 @@ FLUTTER_ASSERT_ARC
     XCTAssertEqual(updateCount, 3);
   }
 }
+#endif
 
 - (void)testUpdateEditingClientNegativeSelection {
   FlutterTextInputView* inputView = [[FlutterTextInputView alloc] initWithOwner:textInputPlugin];
@@ -1473,6 +1473,7 @@ FLUTTER_ASSERT_ARC
   }
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testInputViewsDoNotHaveUITextInteractions {
   if (@available(iOS 13.0, *)) {
     FlutterTextInputView* inputView = [[FlutterTextInputView alloc] initWithOwner:textInputPlugin];
@@ -1486,6 +1487,7 @@ FLUTTER_ASSERT_ARC
     XCTAssertFalse(hasTextInteraction);
   }
 }
+#endif
 
 #pragma mark - UITextInput methods - Tests
 
@@ -2836,6 +2838,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertNil(activeView.superview, @"activeView must be removed from view hierarchy.");
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testInteractiveKeyboardAfterUserScrollWillResignFirstResponder {
   FlutterTextInputView* inputView = [[FlutterTextInputView alloc] initWithOwner:textInputPlugin];
   [UIApplication.sharedApplication.keyWindow addSubview:inputView];
@@ -3008,6 +3011,7 @@ FLUTTER_ASSERT_ARC
   }
   textInputPlugin.cachedFirstResponder = nil;
 }
+#endif
 
 - (void)testInteractiveKeyboardFindFirstResponderRecursive {
   FlutterTextInputView* inputView = [[FlutterTextInputView alloc] initWithOwner:textInputPlugin];
@@ -3058,6 +3062,7 @@ FLUTTER_ASSERT_ARC
   textInputPlugin.cachedFirstResponder = nil;
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testInteractiveKeyboardDidResignFirstResponderDelegateisCalledAfterDismissedKeyboard {
   NSSet<UIScene*>* scenes = UIApplication.sharedApplication.connectedScenes;
   XCTAssertEqual(scenes.count, 1UL, @"There must only be 1 scene for test");
@@ -3320,6 +3325,7 @@ FLUTTER_ASSERT_ARC
       UIView.areAnimationsEnabled,
       @"The animation should still be disabled following showKeyboardAndRemoveScreenshot");
 }
+#endif
 
 - (void)testInteractiveKeyboardShowKeyboardAndRemoveScreenshotAnimationIsReenabledAfterDelay {
   [UIView setAnimationsEnabled:YES];

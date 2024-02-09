@@ -82,6 +82,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(hitTestResult, object2);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testAccessibilityHitTestNoFocusableItem {
   fml::WeakPtrFactory<flutter::AccessibilityBridgeIos> factory(
       new flutter::testing::MockAccessibilityBridge());
@@ -120,6 +121,7 @@ FLUTTER_ASSERT_ARC
 
   XCTAssertNil(hitTestResult);
 }
+#endif
 
 - (void)testAccessibilityScrollToVisible {
   fml::WeakPtrFactory<flutter::testing::MockAccessibilityBridge> factory(
@@ -781,6 +783,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertTrue(bridge->observations[0].action == flutter::SemanticsAction::kShowOnScreen);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testFlutterSwitchSemanticsObjectMatchesUISwitch {
   fml::WeakPtrFactory<flutter::testing::MockAccessibilityBridge> factory(
       new flutter::testing::MockAccessibilityBridge());
@@ -814,6 +817,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(object.accessibilityTraits, nativeSwitch.accessibilityTraits);
   XCTAssertEqualObjects(object.accessibilityValue, nativeSwitch.accessibilityValue);
 }
+#endif
 
 - (void)testFlutterSemanticsObjectOfRadioButton {
   fml::WeakPtrFactory<flutter::testing::MockAccessibilityBridge> factory(
@@ -833,6 +837,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertNil(object.accessibilityValue);
 }
 
+#if !(defined(TARGET_OS_TV) && TARGET_OS_TV)
 - (void)testFlutterSwitchSemanticsObjectMatchesUISwitchDisabled {
   fml::WeakPtrFactory<flutter::testing::MockAccessibilityBridge> factory(
       new flutter::testing::MockAccessibilityBridge());
@@ -854,6 +859,7 @@ FLUTTER_ASSERT_ARC
   XCTAssertEqual(object.accessibilityTraits, nativeSwitch.accessibilityTraits);
   XCTAssertEqualObjects(object.accessibilityValue, nativeSwitch.accessibilityValue);
 }
+#endif
 
 - (void)testSemanticsObjectDeallocated {
   fml::WeakPtrFactory<flutter::AccessibilityBridgeIos> factory(
