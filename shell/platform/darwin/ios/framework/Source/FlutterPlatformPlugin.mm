@@ -240,6 +240,7 @@ static void SetStatusBarStyleForSharedApplication(UIStatusBarStyle style) {
           impactOccurred];
     } else if ([@"HapticFeedbackType.selectionClick" isEqualToString:feedbackType]) {
       [[[[UISelectionFeedbackGenerator alloc] init] autorelease] selectionChanged];
+  }
 #endif
 }
 

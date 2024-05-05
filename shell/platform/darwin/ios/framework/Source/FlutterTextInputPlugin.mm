@@ -406,11 +406,12 @@ static BOOL IsFieldPasswordRelated(NSDictionary* configuration) {
       [contentType isEqualToString:UITextContentTypeUsername]) {
     return YES;
   }
-  
-  if ([contentType isEqualToString:UITextContentTypeNewPassword]) {
-      return YES;
-  }
 
+  if (@available(iOS 12.0, *)) {
+    if ([contentType isEqualToString:UITextContentTypeNewPassword]) {
+      return YES;
+    }
+  }
   return NO;
 }
 
@@ -598,11 +599,11 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
                            inDirection:(UITextDirection)direction {
   UITextRange* result;
   switch (granularity) {
-    case UITextGranularityLine:      
+    case UITextGranularityLine:
       // The default UITextInputStringTokenizer does not handle line granularity
       // correctly. We need to implement our own line tokenizer.
       result = [self lineEnclosingPosition:position inDirection:direction];
-      break;    
+      break;
     case UITextGranularityCharacter:
     case UITextGranularityWord:
     case UITextGranularitySentence:
@@ -1150,7 +1151,7 @@ static BOOL IsSelectionRectBoundaryCloserToPoint(CGPoint point,
   if (success) {
     if (!_preventCursorDismissWhenResignFirstResponder) {
       [self.textInputDelegate flutterTextInputView:self
-        didResignFirstResponderWithTextInputClient:_textInputClient];
+          didResignFirstResponderWithTextInputClient:_textInputClient];
     }
   }
   return success;
@@ -2337,7 +2338,6 @@ return false;
 
 - (instancetype)initWithDelegate:(id<FlutterTextInputDelegate>)textInputDelegate {
   self = [super init];
-
   if (self) {
     // `_textInputDelegate` is a weak reference because it should retain FlutterTextInputPlugin.
     _textInputDelegate = textInputDelegate;
@@ -2353,7 +2353,6 @@ return false;
                                                object:nil];
 #endif                                               
   }
-
 
   return self;
 }
@@ -2435,7 +2434,6 @@ return false;
     CGFloat pointerY = (CGFloat)[args[@"pointerY"] doubleValue];
     [self handlePointerUp:pointerY];
     result(nil);
-  
   } else {
     result(FlutterMethodNotImplemented);
   }

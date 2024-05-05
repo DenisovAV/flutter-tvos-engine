@@ -131,8 +131,8 @@ bool Contents::ApplyColorFilter(
 }
 
 bool Contents::ShouldRender(const Entity& entity,
-                            const std::optional<Rect> stencil_coverage) const {
-  if (!stencil_coverage.has_value()) {
+                            const std::optional<Rect> clip_coverage) const {
+  if (!clip_coverage.has_value()) {
     return false;
   }
   auto coverage = GetCoverage(entity);

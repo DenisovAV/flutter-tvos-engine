@@ -286,11 +286,6 @@ bool Canvas::AttemptDrawBlurredRRect(const Rect& rect,
 
   Paint new_paint = paint;
 
-  if (std::fabs(new_paint.mask_blur_descriptor->sigma.sigma) <=
-      kEhCloseEnough) {
-    return true;
-  }
-
   // For symmetrically mask blurred solid RRects, absorb the mask blur and use
   // a faster SDF approximation.
 
@@ -689,7 +684,7 @@ void Canvas::SaveLayer(const Paint& paint,
   // applied.
   // See also: https://github.com/flutter/flutter/issues/139294
   if (paint.image_filter) {
-    xformation_stack_.back().cull_rect = std::nullopt;
+    transform_stack_.back().cull_rect = std::nullopt;
   }
 
   auto& new_layer_pass = GetCurrentPass();

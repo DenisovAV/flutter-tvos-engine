@@ -381,6 +381,11 @@ void main() async {
     shader.dispose();
   });
 
+  if (impellerEnabled) {
+    print('Skipped for Impeller - https://github.com/flutter/flutter/issues/122823');
+    return;
+  }
+
   // Test all supported GLSL ops. See lib/spirv/lib/src/constants.dart
   final Map<String, FragmentProgram> iplrSupportedGLSLOpShaders = await _loadShaderAssets(
     path.join('supported_glsl_op_shaders', 'iplr'),

@@ -20,62 +20,8 @@
 namespace impeller {
 namespace compiler {
 
-// Sets the file access mode of the file at path 'p' to 0644.
-static bool SetPermissiveAccess(const std::filesystem::path& p) {
-  auto permissions =
-      std::filesystem::perms::owner_read | std::filesystem::perms::owner_write |
-      std::filesystem::perms::group_read | std::filesystem::perms::others_read;
-  std::error_code error;
-  std::filesystem::permissions(p, permissions, error);
-  if (error) {
-    std::cerr << "Failed to set access on file '" << p
-              << "': " << error.message() << std::endl;
-    return false;
-  }
-  return true;
-}
-
-bool Main(const fml::CommandLine& command_line) {
-  fml::InstallCrashHandler();
-  if (command_line.HasOption("help")) {
-    Switches::PrintHelp(std::cout);
-    return true;
-  }
-
-  Switches switches(command_line);
-  if (!switches.AreValid(std::cerr)) {
-    std::cerr << "Invalid flags specified." << std::endl;
-    Switches::PrintHelp(std::cerr);
-    return false;
-  }
-
-  std::shared_ptr<fml::FileMapping> source_file_mapping =
-      fml::FileMapping::CreateReadOnly(switches.source_file_name);
-  if (!source_file_mapping) {
-    std::cerr << "Could not open input file." << std::endl;
-    return false;
-  }
-
-  SourceOptions options;
-  options.target_platform = switches.target_platform;
-  options.source_language = switches.source_language;
-  if (switches.input_type == SourceType::kUnknown) {
-    options.type = SourceTypeFromFileName(switches.source_file_name);
-  } else {
-    options.type = switches.input_type;
-  }
-  options.working_directory = switches.working_directory;
-  options.file_name = switches.source_file_name;
-  options.include_dirs = switches.include_directories;
-  options.defines = switches.defines;
-  options.entry_point_name = EntryPointFunctionNameFromSourceName(
-      switches.source_file_name, options.type, options.source_language,
-      switches.entry_point);
-  options.json_format = switches.json_format;
-  options.gles_language_version = switches.gles_language_version;
-  options.metal_version = switches.metal_version;
-  options.use_half_textures = switches.use_half_textures;
-
+static Reflector::Options CreateReflectorOptions(const SourceOptions& options,
+                                                 const Switches& switches) {
   Reflector::Options reflector_options;
   reflector_options.target_platform = options.target_platform;
   reflector_options.entry_point_name = options.entry_point_name;

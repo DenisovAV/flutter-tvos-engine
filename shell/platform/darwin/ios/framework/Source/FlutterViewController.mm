@@ -72,6 +72,11 @@ typedef struct MouseState {
 #else
 @interface FlutterViewController () <FlutterBinaryMessenger, UIScrollViewDelegate>
 #endif
+
+// TODO(dkwingsmt): Make the view ID property public once the iOS shell
+// supports multiple views.
+// https://github.com/flutter/flutter/issues/138168
+@property(nonatomic, readonly) int64_t viewIdentifier;
 @property(nonatomic, readwrite, getter=isDisplayingFlutterUI) BOOL displayingFlutterUI;
 @property(nonatomic, assign) BOOL isHomeIndicatorHidden;
 @property(nonatomic, assign) BOOL isPresentingViewControllerAnimating;

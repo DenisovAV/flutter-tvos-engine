@@ -36,7 +36,8 @@ class ClipContents final : public Contents {
 
   // |Contents|
   bool ShouldRender(const Entity& entity,
-                    const std::optional<Rect> stencil_coverage) const override;
+                    const std::optional<Rect> clip_coverage) const override;
+
   // |Contents|
   bool Render(const ContentContext& renderer,
               const Entity& entity,
@@ -78,7 +79,8 @@ class ClipRestoreContents final : public Contents {
 
   // |Contents|
   bool ShouldRender(const Entity& entity,
-                    const std::optional<Rect> stencil_coverage) const override;
+                    const std::optional<Rect> clip_coverage) const override;
+
   // |Contents|
   bool Render(const ContentContext& renderer,
               const Entity& entity,
