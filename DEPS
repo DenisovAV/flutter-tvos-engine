@@ -272,12 +272,6 @@ deps = {
   #'src': 'https://github.com/flutter/buildroot.git' + '@' + 'f27d99b4428dea312646130d60c33a2d38fa9dc6',
   'src': Var('upc_git') + '/flutter-tvos-buildroot.git' + '@' + Var('upc_revision'),  
 
-   # Fuchsia compatibility
-   #
-   # The dependencies in this section should match the layout in the Fuchsia gn
-   # build. Eventually, we'll manage these dependencies together with Fuchsia
-   # and not have to specific hashes.
-
   'src/flutter/third_party/rapidjson':
    Var('flutter_git') + '/third_party/rapidjson' + '@' + 'ef3564c5c8824989393b87df25355baf35ff544b',
 
@@ -629,9 +623,6 @@ deps = {
 
   'src/third_party/freetype2':
    Var('flutter_git') + '/third_party/freetype2' + '@' + '3bea2761290a1cbe7d8f75c1c5a7ad727f826a66',
-
-  'src/third_party/root_certificates':
-   Var('dart_git') + '/root_certificates.git' + '@' + Var('dart_root_certificates_rev'),
 
   'src/third_party/skia':
    #Var('skia_git') + '/skia.git' + '@' +  Var('skia_revision'),
